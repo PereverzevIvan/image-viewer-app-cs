@@ -20,11 +20,11 @@ public class MainWindowViewModel : ViewModelBase
     private readonly ImageLoaderService _imageLoader;
     private ObservableCollection<ImageFile> _images;
     private bool _isHorizontalOrientation;
-    private int _columnsCount = 4;
-    private int _maxColumnsCount = 6;
     private ViewMode _currentViewMode = ViewMode.Grid;
     private double _windowWidth;
     private double _windowHeight;
+    private int _maxColumns;
+    private int _maxRows;
 
     public MainWindowViewModel()
     {
@@ -46,29 +46,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (SetField(ref _isHorizontalOrientation, value))
             {
-                RecalculateMaxColumns();
-            }
-        }
-    }
-
-    public int ColumnsCount
-    {
-        get => _columnsCount;
-        set => SetField(ref _columnsCount, Math.Min(value, MaxColumnsCount));
-    }
-
-    public int MaxColumnsCount
-    {
-        get => _maxColumnsCount;
-        private set
-        {
-            if (SetField(ref _maxColumnsCount, value))
-            {
-                // Если текущее количество колонок больше максимального, уменьшаем его
-                if (ColumnsCount > value)
-                {
-                    ColumnsCount = value;
-                }
+                RecalculateMaxDimensions();
             }
         }
     }
@@ -88,7 +66,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (SetField(ref _windowWidth, value))
             {
-                RecalculateMaxColumns();
+                RecalculateMaxDimensions();
             }
         }
     }
@@ -100,9 +78,21 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (SetField(ref _windowHeight, value))
             {
-                RecalculateMaxColumns();
+                RecalculateMaxDimensions();
             }
         }
+    }
+
+    public int MaxColumns
+    {
+        get => _maxColumns;
+        private set => SetField(ref _maxColumns, value);
+    }
+
+    public int MaxRows
+    {
+        get => _maxRows;
+        private set => SetField(ref _maxRows, value);
     }
 
     public ICommand ToggleViewModeCommand { get; }
@@ -113,24 +103,14 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(ViewModeButtonText));
     }
 
-    private void RecalculateMaxColumns()
+    private void RecalculateMaxDimensions()
     {
         const int itemWidth = 210; // 200 + 10 отступы
         const int itemHeight = 210;
-        const int minColumns = 2;
+        const int minDimension = 2;
 
-        if (IsHorizontalOrientation)
-        {
-            // В горизонтальном режиме ограничиваем количество строк по высоте окна
-            int maxRows = Math.Max(minColumns, (int)(WindowHeight / itemHeight));
-            MaxColumnsCount = maxRows;
-        }
-        else
-        {
-            // В вертикальном режиме ограничиваем количество колонок по ширине окна
-            int maxColumns = Math.Max(minColumns, (int)(WindowWidth / itemWidth));
-            MaxColumnsCount = maxColumns;
-        }
+        MaxColumns = Math.Max(minDimension, (int)(WindowWidth / itemWidth));
+        MaxRows = Math.Max(minDimension, (int)(WindowHeight / itemHeight));
     }
 
     public async Task LoadImagesAsync(string[] paths)
