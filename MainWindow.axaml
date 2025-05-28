@@ -5,48 +5,119 @@
         x:Class="ImageViewerApp.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Image Viewer"
+        Background="#F0F0F0"
         WindowState="Maximized">
 
-    <Grid RowDefinitions="Auto,*">
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <ToggleButton Content="Horizontal/Vertical"
-                         IsChecked="{Binding IsHorizontalOrientation}"/>
-            <Slider Minimum="2" Maximum="6" Value="{Binding ColumnsCount}"
-                    Width="200" Margin="10,0"/>
-        </StackPanel>
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#007AFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ToggleButton">
+            <Setter Property="Background" Value="#007AFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="Slider">
+            <Setter Property="Foreground" Value="#007AFF"/>
+        </Style>
+    </Window.Styles>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding Images}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="{Binding ColumnsCount}"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="5" 
-                                Background="#20000000"
-                                CornerRadius="10"
-                                DoubleTapped="OnImageDoubleTapped">
-                            <Panel>
-                                <Image Source="{Binding Image}"
-                                       Stretch="UniformToFill"
-                                       Width="200"
-                                       Height="200"/>
-                                <Border Height="40"
-                                        VerticalAlignment="Bottom"
-                                        Background="#80000000">
-                                    <TextBlock Text="{Binding Name}"
-                                               Margin="10,0"
-                                               VerticalAlignment="Center"
-                                               Foreground="White"/>
-                                </Border>
-                            </Panel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" 
+                Background="White" 
+                BoxShadow="0 2 4 0 #20000000"
+                Padding="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <ToggleButton Content="{Binding IsHorizontalOrientation, 
+                              Converter={x:Static conv:OrientationTextConverter.Instance}}"
+                             IsChecked="{Binding IsHorizontalOrientation}"/>
+                <Slider Minimum="2" Maximum="6" Value="{Binding ColumnsCount}"
+                        Width="200" 
+                        IsVisible="{Binding CurrentViewMode, 
+                                   Converter={x:Static conv:ViewModeToGridVisibilityConverter.Instance}}"/>
+                <Button Content="{Binding ViewModeButtonText}"
+                        Command="{Binding ToggleViewModeCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" 
+                     Margin="10"
+                     HorizontalScrollBarVisibility="{Binding IsHorizontalOrientation, 
+                         Converter={x:Static conv:OrientationToScrollBarConverter.Instance}}">
+            <Panel>
+                <ItemsControl ItemsSource="{Binding Images}"
+                            IsVisible="{Binding CurrentViewMode, 
+                                      Converter={x:Static conv:ViewModeToGridVisibilityConverter.Instance}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" 
+                                     Width="{Binding ColumnsCount, 
+                                             Converter={x:Static conv:ColumnsToWidthConverter.Instance}}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="5"
+                                    Background="#20000000"
+                                    CornerRadius="10"
+                                    Width="200"
+                                    Height="200"
+                                    DoubleTapped="OnImageDoubleTapped">
+                                <Panel>
+                                    <Image Source="{Binding Image}"
+                                           Stretch="UniformToFill"/>
+                                    <Border Height="40"
+                                            VerticalAlignment="Bottom"
+                                            Background="#80000000">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Margin="10,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="White"/>
+                                    </Border>
+                                </Panel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Images}"
+                            IsVisible="{Binding CurrentViewMode, 
+                                      Converter={x:Static conv:ViewModeToListVisibilityConverter.Instance}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="{Binding IsHorizontalOrientation, 
+                                                  Converter={x:Static conv:OrientationConverter.Instance}}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="5"
+                                    Background="#20000000"
+                                    CornerRadius="10"
+                                    Width="200"
+                                    Height="200"
+                                    DoubleTapped="OnImageDoubleTapped">
+                                <Panel>
+                                    <Image Source="{Binding Image}"
+                                           Stretch="UniformToFill"/>
+                                    <Border Height="40"
+                                            VerticalAlignment="Bottom"
+                                            Background="#80000000">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Margin="10,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="White"/>
+                                    </Border>
+                                </Panel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Panel>
         </ScrollViewer>
     </Grid>
 </Window>
