@@ -11,6 +11,12 @@ public class FullscreenViewModel : ViewModelBase
     private readonly ObservableCollection<ImageFile> _images;
     private int _currentIndex;
     private ImageFile? _currentImage;
+    private double _zoom = 1.0;
+    private double _offsetX = 0;
+    private double _offsetY = 0;
+    private bool _isPanning;
+    private double _lastPanX;
+    private double _lastPanY;
 
     public event EventHandler? CloseRequested;
 
@@ -23,6 +29,7 @@ public class FullscreenViewModel : ViewModelBase
         PreviousCommand = new RelayCommand(Previous, CanPrevious);
         NextCommand = new RelayCommand(Next, CanNext);
         CloseCommand = new RelayCommand(Close);
+        ResetTransformCommand = new RelayCommand(ResetTransform);
     }
 
     public ImageFile? CurrentImage
@@ -31,9 +38,72 @@ public class FullscreenViewModel : ViewModelBase
         private set => SetField(ref _currentImage, value);
     }
 
+    public double Zoom
+    {
+        get => _zoom;
+        set
+        {
+            if (value < 1.0) value = 1.0;
+            if (value > 8.0) value = 8.0;
+            SetField(ref _zoom, value);
+        }
+    }
+
+    public double OffsetX
+    {
+        get => _offsetX;
+        set => SetField(ref _offsetX, value);
+    }
+
+    public double OffsetY
+    {
+        get => _offsetY;
+        set => SetField(ref _offsetY, value);
+    }
+
     public ICommand PreviousCommand { get; }
     public ICommand NextCommand { get; }
     public ICommand CloseCommand { get; }
+    public ICommand ResetTransformCommand { get; }
+
+    public void StartPan(double x, double y)
+    {
+        _isPanning = true;
+        _lastPanX = x;
+        _lastPanY = y;
+    }
+
+    public void Pan(double x, double y)
+    {
+        if (_isPanning)
+        {
+            OffsetX += (x - _lastPanX) / Zoom;
+            OffsetY += (y - _lastPanY) / Zoom;
+            _lastPanX = x;
+            _lastPanY = y;
+        }
+    }
+
+    public void EndPan()
+    {
+        _isPanning = false;
+    }
+
+    public void ZoomImage(double delta, double centerX, double centerY)
+    {
+        var oldZoom = Zoom;
+        Zoom += delta;
+        // Центрируем относительно курсора
+        OffsetX -= (centerX / oldZoom - centerX / Zoom);
+        OffsetY -= (centerY / oldZoom - centerY / Zoom);
+    }
+
+    private void ResetTransform()
+    {
+        Zoom = 1.0;
+        OffsetX = 0;
+        OffsetY = 0;
+    }
 
     private void Previous()
     {
@@ -41,6 +111,7 @@ public class FullscreenViewModel : ViewModelBase
         {
             _currentIndex--;
             CurrentImage = _images[_currentIndex];
+            ResetTransform();
         }
     }
 
@@ -52,6 +123,7 @@ public class FullscreenViewModel : ViewModelBase
         {
             _currentIndex++;
             CurrentImage = _images[_currentIndex];
+            ResetTransform();
         }
     }
 
