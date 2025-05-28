@@ -1,69 +1,78 @@
+using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
 using ImageViewerApp.ViewModels;
 
 namespace ImageViewerApp.Views;
 
 public partial class FullscreenWindow : Window
 {
-    private bool _isPanning = false;
+    private FullscreenViewModel ViewModel => (FullscreenViewModel)DataContext!;
+    private bool _isPanning;
 
     public FullscreenWindow()
     {
         InitializeComponent();
     }
 
-    public FullscreenWindow(FullscreenViewModel viewModel) : this()
+    protected override void OnDataContextChanged(EventArgs e)
     {
-        DataContext = viewModel;
-        viewModel.CloseRequested += (s, e) => Close();
+        base.OnDataContextChanged(e);
+        if (DataContext is FullscreenViewModel vm)
+        {
+            vm.CloseRequested += (_, _) => Close();
+        }
+    }
+
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        Focus();
     }
 
     private void OnImagePointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        if (DataContext is FullscreenViewModel vm)
-        {
-            var point = e.GetPosition(this);
-            vm.ZoomImage(e.Delta.Y > 0 ? 0.2 : -0.2, point.X, point.Y);
-        }
+        var point = e.GetPosition((Visual)sender!);
+        var delta = e.Delta.Y * 0.2;
+        ViewModel.ZoomImage(delta, point.X, point.Y);
     }
 
     private void OnImagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && DataContext is FullscreenViewModel vm)
+        if (e.GetCurrentPoint((Visual)sender!).Properties.IsLeftButtonPressed)
         {
-            var point = e.GetPosition(this);
-            vm.StartPan(point.X, point.Y);
             _isPanning = true;
-            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+            var point = e.GetPosition((Visual)sender!);
+            ViewModel.StartPan(point.X, point.Y);
+            e.Handled = true;
         }
     }
 
     private void OnImagePointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (DataContext is FullscreenViewModel vm)
+        if (_isPanning)
         {
-            vm.EndPan();
             _isPanning = false;
-            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+            ViewModel.EndPan();
+            e.Handled = true;
         }
     }
 
     private void OnImagePointerMoved(object? sender, PointerEventArgs e)
     {
-        if (_isPanning && DataContext is FullscreenViewModel vm)
+        if (_isPanning)
         {
-            var point = e.GetPosition(this);
-            vm.Pan(point.X, point.Y);
+            var point = e.GetPosition((Visual)sender!);
+            ViewModel.Pan(point.X, point.Y);
+            e.Handled = true;
         }
     }
 
     private void OnImageDoubleTapped(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is FullscreenViewModel vm)
-        {
-            vm.ResetTransformCommand.Execute(null);
-        }
+        ViewModel.ResetTransform();
     }
 } 

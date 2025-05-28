@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using ImageViewerApp.Models;
 using ImageViewerApp.ViewModels;
 using ImageViewerApp.Views;
@@ -28,16 +29,36 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnImageDoubleTapped(object? sender, RoutedEventArgs e)
+    private async void OnImageDoubleTapped(object? sender, RoutedEventArgs e)
     {
         if (sender is Border border && 
-            border.DataContext is ImageFile image &&
+            border.DataContext is ImageFile imageFile && 
             DataContext is MainWindowViewModel vm)
         {
-            var index = vm.Images.IndexOf(image);
-            var fullscreenViewModel = new FullscreenViewModel(vm.Images, index);
-            var fullscreenWindow = new FullscreenWindow(fullscreenViewModel);
-            fullscreenWindow.Show();
+            var index = vm.Images.IndexOf(imageFile);
+            var fullscreenWindow = new FullscreenWindow
+            {
+                DataContext = new FullscreenViewModel(vm.Images, index)
+            };
+            await fullscreenWindow.ShowDialog(this);
+        }
+    }
+
+    private async void OnOpenFolderClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            var options = new FolderPickerOpenOptions
+            {
+                Title = "Select folder with images",
+                AllowMultiple = false
+            };
+
+            var result = await StorageProvider.OpenFolderPickerAsync(options);
+            if (result.Count > 0)
+            {
+                await vm.LoadImagesFromDirectoryAsync(result[0].Path.LocalPath);
+            }
         }
     }
 }

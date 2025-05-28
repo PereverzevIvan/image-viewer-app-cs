@@ -16,9 +16,13 @@ public class FullscreenViewModel : ViewModelBase
     private double _zoom = 1.0;
     private double _offsetX = 0;
     private double _offsetY = 0;
-    private bool _isPanning;
     private double _lastPanX;
     private double _lastPanY;
+    private double _viewportWidth;
+    private double _viewportHeight;
+
+    private const double MinZoom = 0.667; // Позволяет уменьшить до 2/3 от оригинального размера
+    private const double MaxZoom = 8.0;
 
     public event EventHandler? CloseRequested;
 
@@ -32,6 +36,12 @@ public class FullscreenViewModel : ViewModelBase
         NextCommand = new RelayCommand(Next, CanNext);
         CloseCommand = new RelayCommand(() => CloseRequested?.Invoke(this, EventArgs.Empty));
         ResetTransformCommand = new RelayCommand(ResetTransform);
+
+        // Команды для перемещения с клавиатуры
+        MoveLeftCommand = new RelayCommand(() => MoveByKeyboard(-1, 0));
+        MoveRightCommand = new RelayCommand(() => MoveByKeyboard(1, 0));
+        MoveUpCommand = new RelayCommand(() => MoveByKeyboard(0, -1));
+        MoveDownCommand = new RelayCommand(() => MoveByKeyboard(0, 1));
     }
 
     public ImageFile? CurrentImage
@@ -47,8 +57,8 @@ public class FullscreenViewModel : ViewModelBase
         get => _zoom;
         set
         {
-            if (value < 1.0) value = 1.0;
-            if (value > 8.0) value = 8.0;
+            if (value < MinZoom) value = MinZoom;
+            if (value > MaxZoom) value = MaxZoom;
             SetField(ref _zoom, value);
         }
     }
@@ -65,44 +75,73 @@ public class FullscreenViewModel : ViewModelBase
         set => SetField(ref _offsetY, value);
     }
 
+    public double ViewportWidth
+    {
+        get => _viewportWidth;
+        set => SetField(ref _viewportWidth, value);
+    }
+
+    public double ViewportHeight
+    {
+        get => _viewportHeight;
+        set => SetField(ref _viewportHeight, value);
+    }
+
     public ICommand PreviousCommand { get; }
     public ICommand NextCommand { get; }
     public ICommand CloseCommand { get; }
     public ICommand ResetTransformCommand { get; }
+    public ICommand MoveLeftCommand { get; }
+    public ICommand MoveRightCommand { get; }
+    public ICommand MoveUpCommand { get; }
+    public ICommand MoveDownCommand { get; }
 
     public void StartPan(double x, double y)
     {
-        _isPanning = true;
         _lastPanX = x;
         _lastPanY = y;
     }
 
     public void Pan(double x, double y)
     {
-        if (_isPanning)
+        var deltaX = x - _lastPanX;
+        var deltaY = y - _lastPanY;
+
+        // Если масштаб равен 1 или меньше, движение возможно только если изображение уменьшено
+        if (Zoom <= 1.0 && Zoom >= 1.0)
         {
-            OffsetX += (x - _lastPanX) / Zoom;
-            OffsetY += (y - _lastPanY) / Zoom;
             _lastPanX = x;
             _lastPanY = y;
+            return;
         }
+
+        // При отдалении делаем движение медленнее
+        var factor = Zoom < 1.0 ? 4.0 : Zoom;
+        
+        OffsetX += deltaX / factor;
+        OffsetY += deltaY / factor;
+
+        _lastPanX = x;
+        _lastPanY = y;
     }
 
     public void EndPan()
     {
-        _isPanning = false;
+        // Ничего делать не нужно
     }
 
     public void ZoomImage(double delta, double centerX, double centerY)
     {
         var oldZoom = Zoom;
         Zoom += delta;
-        // Центрируем относительно курсора
-        OffsetX -= (centerX / oldZoom - centerX / Zoom);
-        OffsetY -= (centerY / oldZoom - centerY / Zoom);
+
+        // Корректируем смещение относительно центра масштабирования
+        var zoomFactor = Zoom / oldZoom;
+        OffsetX = centerX - (centerX - OffsetX) * zoomFactor;
+        OffsetY = centerY - (centerY - OffsetY) * zoomFactor;
     }
 
-    private void ResetTransform()
+    public void ResetTransform()
     {
         Zoom = 1.0;
         OffsetX = 0;
@@ -138,4 +177,22 @@ public class FullscreenViewModel : ViewModelBase
     }
 
     private bool CanNext() => _currentIndex < _images.Count - 1;
+
+    public void MoveByKeyboard(double deltaX, double deltaY)
+    {
+        // Если масштаб равен 1, движение не нужно
+        if (Zoom <= 1.0 && Zoom >= 1.0)
+        {
+            return;
+        }
+
+        // При отдалении делаем движение медленнее
+        var factor = Zoom < 1.0 ? 4.0 : Zoom;
+        
+        // Базовый шаг перемещения
+        const double baseStep = 20.0;
+        
+        OffsetX += (deltaX * baseStep) / factor;
+        OffsetY += (deltaY * baseStep) / factor;
+    }
 } 

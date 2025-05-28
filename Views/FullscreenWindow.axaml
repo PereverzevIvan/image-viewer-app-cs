@@ -5,10 +5,23 @@
         x:DataType="vm:FullscreenViewModel"
         Title="Image Viewer"
         WindowState="FullScreen"
-        Background="Black">
+        Background="Black"
+        Focusable="True">
 
     <Window.KeyBindings>
         <KeyBinding Gesture="Escape" Command="{Binding CloseCommand}"/>
+        
+        <!-- Vim-style -->
+        <KeyBinding Gesture="H" Command="{Binding MoveLeftCommand}"/>
+        <KeyBinding Gesture="J" Command="{Binding MoveDownCommand}"/>
+        <KeyBinding Gesture="K" Command="{Binding MoveUpCommand}"/>
+        <KeyBinding Gesture="L" Command="{Binding MoveRightCommand}"/>
+        
+        <!-- Arrow keys -->
+        <KeyBinding Gesture="Left" Command="{Binding MoveLeftCommand}"/>
+        <KeyBinding Gesture="Down" Command="{Binding MoveDownCommand}"/>
+        <KeyBinding Gesture="Up" Command="{Binding MoveUpCommand}"/>
+        <KeyBinding Gesture="Right" Command="{Binding MoveRightCommand}"/>
     </Window.KeyBindings>
 
     <Window.Styles>
