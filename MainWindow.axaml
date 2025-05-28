@@ -34,8 +34,6 @@
                 <ToggleButton Content="{Binding IsHorizontalOrientation, 
                               Converter={x:Static conv:OrientationTextConverter.Instance}}"
                              IsChecked="{Binding IsHorizontalOrientation}"/>
-                <Button Content="{Binding ViewModeButtonText}"
-                        Command="{Binding ToggleViewModeCommand}"/>
             </StackPanel>
         </Border>
 
@@ -45,81 +43,43 @@
                          Converter={x:Static conv:OrientationToScrollBarConverter.Instance}}"
                      VerticalScrollBarVisibility="{Binding !IsHorizontalOrientation, 
                          Converter={x:Static conv:OrientationToScrollBarConverter.Instance}}">
-            <Panel>
-                <ItemsControl ItemsSource="{Binding Images}"
-                            IsVisible="{Binding CurrentViewMode, 
-                                      Converter={x:Static conv:ViewModeToGridVisibilityConverter.Instance}}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="{Binding IsHorizontalOrientation, 
-                                                 Converter={x:Static conv:WrapOrientationConverter.Instance}}"
-                                     Width="{Binding !IsHorizontalOrientation, 
-                                             Converter={x:Static conv:ColumnsToWidthConverter.Instance},
-                                             ConverterParameter={Binding}}"
-                                     Height="{Binding IsHorizontalOrientation,
-                                             Converter={x:Static conv:RowsToHeightConverter.Instance},
-                                             ConverterParameter={Binding}}"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="5"
-                                    Background="#20000000"
-                                    CornerRadius="10"
-                                    Width="200"
-                                    Height="200"
-                                    DoubleTapped="OnImageDoubleTapped">
-                                <Panel>
-                                    <Image Source="{Binding Image}"
-                                           Stretch="UniformToFill"/>
-                                    <Border Height="40"
-                                            VerticalAlignment="Bottom"
-                                            Background="#80000000">
-                                        <TextBlock Text="{Binding Name}"
-                                                   Margin="10,0"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="White"/>
-                                    </Border>
-                                </Panel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Images}"
-                            IsVisible="{Binding CurrentViewMode, 
-                                      Converter={x:Static conv:ViewModeToListVisibilityConverter.Instance}}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="{Binding IsHorizontalOrientation, 
-                                                  Converter={x:Static conv:OrientationConverter.Instance}}"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="5"
-                                    Background="#20000000"
-                                    CornerRadius="10"
-                                    Width="200"
-                                    Height="200"
-                                    DoubleTapped="OnImageDoubleTapped">
-                                <Panel>
-                                    <Image Source="{Binding Image}"
-                                           Stretch="UniformToFill"/>
-                                    <Border Height="40"
-                                            VerticalAlignment="Bottom"
-                                            Background="#80000000">
-                                        <TextBlock Text="{Binding Name}"
-                                                   Margin="10,0"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="White"/>
-                                    </Border>
-                                </Panel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Panel>
+            <ItemsControl ItemsSource="{Binding Images}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="{Binding IsHorizontalOrientation, 
+                                             Converter={x:Static conv:WrapOrientationConverter.Instance}}"
+                                 Width="{Binding !IsHorizontalOrientation, 
+                                         Converter={x:Static conv:ColumnsToWidthConverter.Instance},
+                                         ConverterParameter={Binding}}"
+                                 Height="{Binding IsHorizontalOrientation,
+                                         Converter={x:Static conv:RowsToHeightConverter.Instance},
+                                         ConverterParameter={Binding}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5"
+                                Background="#20000000"
+                                CornerRadius="10"
+                                Width="200"
+                                Height="200"
+                                DoubleTapped="OnImageDoubleTapped">
+                            <Panel>
+                                <Image Source="{Binding Image}"
+                                       Stretch="UniformToFill"/>
+                                <Border Height="40"
+                                        VerticalAlignment="Bottom"
+                                        Background="#80000000">
+                                    <TextBlock Text="{Binding Name}"
+                                               Margin="10,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="White"/>
+                                </Border>
+                            </Panel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </Window>

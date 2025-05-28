@@ -10,7 +10,7 @@ public class RelayCommand : ICommand
 
     public RelayCommand(Action execute, Func<bool>? canExecute = null)
     {
-        _execute = execute;
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         _canExecute = canExecute;
     }
 
@@ -20,8 +20,5 @@ public class RelayCommand : ICommand
 
     public void Execute(object? parameter) => _execute();
 
-    public void RaiseCanExecuteChanged()
-    {
-        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-    }
+    public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 } 

@@ -1,26 +1,17 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia;
 using ImageViewerApp.Models;
 using ImageViewerApp.Services;
-using ImageViewerApp.Commands;
 
 namespace ImageViewerApp.ViewModels;
-
-public enum ViewMode
-{
-    Grid,
-    List
-}
 
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly ImageLoaderService _imageLoader;
     private ObservableCollection<ImageFile> _images;
     private bool _isHorizontalOrientation;
-    private ViewMode _currentViewMode = ViewMode.Grid;
     private double _windowWidth;
     private double _windowHeight;
     private int _maxColumns;
@@ -30,7 +21,6 @@ public class MainWindowViewModel : ViewModelBase
     {
         _imageLoader = new ImageLoaderService();
         _images = new ObservableCollection<ImageFile>();
-        ToggleViewModeCommand = new RelayCommand(ToggleViewMode);
     }
 
     public ObservableCollection<ImageFile> Images
@@ -50,14 +40,6 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
     }
-
-    public ViewMode CurrentViewMode
-    {
-        get => _currentViewMode;
-        set => SetField(ref _currentViewMode, value);
-    }
-
-    public string ViewModeButtonText => CurrentViewMode == ViewMode.Grid ? "Switch to List" : "Switch to Grid";
 
     public double WindowWidth
     {
@@ -93,14 +75,6 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _maxRows;
         private set => SetField(ref _maxRows, value);
-    }
-
-    public ICommand ToggleViewModeCommand { get; }
-
-    private void ToggleViewMode()
-    {
-        CurrentViewMode = CurrentViewMode == ViewMode.Grid ? ViewMode.List : ViewMode.Grid;
-        OnPropertyChanged(nameof(ViewModeButtonText));
     }
 
     private void RecalculateMaxDimensions()
