@@ -6,7 +6,9 @@
         x:DataType="vm:MainWindowViewModel"
         Title="Image Viewer"
         Background="#F0F0F0"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Width="{Binding WindowWidth, Mode=TwoWay}"
+        Height="{Binding WindowHeight, Mode=TwoWay}">
 
     <Window.Styles>
         <Style Selector="Button">
@@ -35,7 +37,9 @@
                 <ToggleButton Content="{Binding IsHorizontalOrientation, 
                               Converter={x:Static conv:OrientationTextConverter.Instance}}"
                              IsChecked="{Binding IsHorizontalOrientation}"/>
-                <Slider Minimum="2" Maximum="6" Value="{Binding ColumnsCount}"
+                <Slider Minimum="2" 
+                        Maximum="{Binding MaxColumnsCount}"
+                        Value="{Binding ColumnsCount}"
                         Width="200" 
                         IsVisible="{Binding CurrentViewMode, 
                                    Converter={x:Static conv:ViewModeToGridVisibilityConverter.Instance}}"/>

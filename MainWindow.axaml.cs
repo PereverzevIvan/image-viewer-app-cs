@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,10 +10,22 @@ namespace ImageViewerApp;
 
 public partial class MainWindow : Window
 {
+    private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext!;
+
     public MainWindow()
     {
         InitializeComponent();
         DataContext = new MainWindowViewModel();
+        LayoutUpdated += OnLayoutUpdated;
+    }
+
+    private void OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.WindowWidth = Bounds.Width;
+            ViewModel.WindowHeight = Bounds.Height;
+        }
     }
 
     private void OnImageDoubleTapped(object? sender, RoutedEventArgs e)
