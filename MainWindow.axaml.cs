@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using ImageViewerApp.Models;
 using ImageViewerApp.ViewModels;
+using ImageViewerApp.Views;
 
 namespace ImageViewerApp;
 
@@ -13,24 +15,16 @@ public partial class MainWindow : Window
         DataContext = new MainWindowViewModel();
     }
 
-    private void OnImagePointerEnter(object? sender, PointerEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.HoverZoomLevel = 1.5;
-        }
-    }
-
-    private void OnImagePointerLeave(object? sender, PointerEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.HoverZoomLevel = 1.0;
-        }
-    }
-
     private void OnImageDoubleTapped(object? sender, RoutedEventArgs e)
     {
-        // TODO: Implement fullscreen view
+        if (sender is Border border && 
+            border.DataContext is ImageFile image &&
+            DataContext is MainWindowViewModel vm)
+        {
+            var index = vm.Images.IndexOf(image);
+            var fullscreenViewModel = new FullscreenViewModel(vm.Images, index);
+            var fullscreenWindow = new FullscreenWindow(fullscreenViewModel);
+            fullscreenWindow.Show();
+        }
     }
 }

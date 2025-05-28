@@ -4,39 +4,45 @@
         xmlns:conv="using:ImageViewerApp.Converters"
         x:Class="ImageViewerApp.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Image Viewer">
+        Title="Image Viewer"
+        WindowState="Maximized">
 
     <Grid RowDefinitions="Auto,*">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
             <ToggleButton Content="Horizontal/Vertical"
                          IsChecked="{Binding IsHorizontalOrientation}"/>
-            <Slider Minimum="0.1" Maximum="2" Value="{Binding ZoomLevel}"
+            <Slider Minimum="2" Maximum="6" Value="{Binding ColumnsCount}"
                     Width="200" Margin="10,0"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding Images}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="{Binding IsHorizontalOrientation, 
-                            Converter={x:Static conv:OrientationConverter.Instance}}" />
+                        <UniformGrid Columns="{Binding ColumnsCount}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="5" 
-                                PointerEntered="OnImagePointerEnter"
-                                PointerExited="OnImagePointerLeave"
+                                Background="#20000000"
+                                CornerRadius="10"
                                 DoubleTapped="OnImageDoubleTapped">
-                            <Image Source="{Binding Image}"
-                                   Width="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomLevel, 
-                                          Converter={x:Static conv:NumberMultiplierConverter.Instance}, 
-                                          ConverterParameter=200}"
-                                   Height="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomLevel, 
-                                           Converter={x:Static conv:NumberMultiplierConverter.Instance}, 
-                                           ConverterParameter=200}"
-                                   Stretch="Uniform"/>
+                            <Panel>
+                                <Image Source="{Binding Image}"
+                                       Stretch="UniformToFill"
+                                       Width="200"
+                                       Height="200"/>
+                                <Border Height="40"
+                                        VerticalAlignment="Bottom"
+                                        Background="#80000000">
+                                    <TextBlock Text="{Binding Name}"
+                                               Margin="10,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="White"/>
+                                </Border>
+                            </Panel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

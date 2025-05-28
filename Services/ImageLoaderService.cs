@@ -20,13 +20,16 @@ public class ImageLoaderService
             
             try
             {
-                var bitmap = new Bitmap(path);
-                images.Add(new ImageFile
+                await Task.Run(() =>
                 {
-                    Path = path,
-                    Name = Path.GetFileName(path),
-                    Image = bitmap,
-                    GroupId = 0
+                    var bitmap = new Bitmap(path);
+                    images.Add(new ImageFile
+                    {
+                        Path = path,
+                        Name = Path.GetFileName(path),
+                        Image = bitmap,
+                        GroupId = 0
+                    });
                 });
             }
             catch (Exception)

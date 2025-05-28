@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ImageViewerApp.ViewModels"
+        x:Class="ImageViewerApp.Views.FullscreenWindow"
+        x:DataType="vm:FullscreenViewModel"
+        Title="Image Viewer"
+        WindowState="FullScreen"
+        Background="Black">
+
+    <Grid>
+        <Image Source="{Binding CurrentImage.Image}"
+               Stretch="Uniform"/>
+               
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,20"
+                    Spacing="10">
+            <Button Content="Previous"
+                    Command="{Binding PreviousCommand}"/>
+            <Button Content="Close"
+                    Command="{Binding CloseCommand}"/>
+            <Button Content="Next"
+                    Command="{Binding NextCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window> 

@@ -10,8 +10,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly ImageLoaderService _imageLoader;
     private ObservableCollection<ImageFile> _images;
     private bool _isHorizontalOrientation;
-    private double _zoomLevel = 1.0;
-    private double _hoverZoomLevel = 1.0;
+    private int _columnsCount = 4;
 
     public MainWindowViewModel()
     {
@@ -31,16 +30,10 @@ public class MainWindowViewModel : ViewModelBase
         set => SetField(ref _isHorizontalOrientation, value);
     }
 
-    public double ZoomLevel
+    public int ColumnsCount
     {
-        get => _zoomLevel;
-        set => SetField(ref _zoomLevel, value);
-    }
-
-    public double HoverZoomLevel
-    {
-        get => _hoverZoomLevel;
-        set => SetField(ref _hoverZoomLevel, value);
+        get => _columnsCount;
+        set => SetField(ref _columnsCount, value);
     }
 
     public async Task LoadImagesAsync(string[] paths)
