@@ -23,6 +23,19 @@
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="CornerRadius" Value="4"/>
         </Style>
+        <Style Selector="Border.image-container">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="ZIndex" Value="0"/>
+        </Style>
+        <Style Selector="Border.image-container:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.1)"/>
+            <Setter Property="ZIndex" Value="1"/>
+        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*">
@@ -58,7 +71,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5"
+                        <Border Margin="10"
+                                Classes="image-container"
                                 Background="#20000000"
                                 CornerRadius="10"
                                 Width="200"

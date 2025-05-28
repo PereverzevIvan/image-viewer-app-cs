@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ImageViewerApp.Models;
 using ImageViewerApp.Commands;
+using Avalonia.Media;
 
 namespace ImageViewerApp.ViewModels;
 
 public class FullscreenViewModel : ViewModelBase
 {
-    private readonly ObservableCollection<ImageFile> _images;
+    private readonly IList<ImageFile> _images;
     private int _currentIndex;
     private ImageFile? _currentImage;
     private double _zoom = 1.0;
@@ -20,15 +22,15 @@ public class FullscreenViewModel : ViewModelBase
 
     public event EventHandler? CloseRequested;
 
-    public FullscreenViewModel(ObservableCollection<ImageFile> images, int startIndex)
+    public FullscreenViewModel(IList<ImageFile> images, int initialIndex)
     {
         _images = images;
-        _currentIndex = startIndex;
-        CurrentImage = images[startIndex];
+        _currentIndex = initialIndex;
+        CurrentImage = images[initialIndex];
 
         PreviousCommand = new RelayCommand(Previous, CanPrevious);
         NextCommand = new RelayCommand(Next, CanNext);
-        CloseCommand = new RelayCommand(Close);
+        CloseCommand = new RelayCommand(() => CloseRequested?.Invoke(this, EventArgs.Empty));
         ResetTransformCommand = new RelayCommand(ResetTransform);
     }
 
@@ -37,6 +39,8 @@ public class FullscreenViewModel : ViewModelBase
         get => _currentImage;
         private set => SetField(ref _currentImage, value);
     }
+
+    public string CurrentImageInfo => $"{_currentIndex + 1} / {_images.Count}";
 
     public double Zoom
     {
@@ -112,6 +116,9 @@ public class FullscreenViewModel : ViewModelBase
             _currentIndex--;
             CurrentImage = _images[_currentIndex];
             ResetTransform();
+            OnPropertyChanged(nameof(CurrentImageInfo));
+            ((RelayCommand)NextCommand).RaiseCanExecuteChanged();
+            ((RelayCommand)PreviousCommand).RaiseCanExecuteChanged();
         }
     }
 
@@ -124,13 +131,11 @@ public class FullscreenViewModel : ViewModelBase
             _currentIndex++;
             CurrentImage = _images[_currentIndex];
             ResetTransform();
+            OnPropertyChanged(nameof(CurrentImageInfo));
+            ((RelayCommand)NextCommand).RaiseCanExecuteChanged();
+            ((RelayCommand)PreviousCommand).RaiseCanExecuteChanged();
         }
     }
 
     private bool CanNext() => _currentIndex < _images.Count - 1;
-
-    private void Close()
-    {
-        CloseRequested?.Invoke(this, EventArgs.Empty);
-    }
 } 

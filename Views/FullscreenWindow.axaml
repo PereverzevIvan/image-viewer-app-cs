@@ -7,6 +7,28 @@
         WindowState="FullScreen"
         Background="Black">
 
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Escape" Command="{Binding CloseCommand}"/>
+    </Window.KeyBindings>
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#40FFFFFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#60FFFFFF"/>
+        </Style>
+        <Style Selector="TextBlock.info">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Margin" Value="8,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Styles>
+
     <Grid>
         <Border Background="Black">
             <Image Source="{Binding CurrentImage.Image}"
@@ -25,19 +47,28 @@
                 </Image.RenderTransform>
             </Image>
         </Border>
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,0,20"
-                    Spacing="10">
-            <Button Content="Previous"
-                    Command="{Binding PreviousCommand}"/>
-            <Button Content="Reset"
-                    Command="{Binding ResetTransformCommand}"/>
-            <Button Content="Close"
-                    Command="{Binding CloseCommand}"/>
-            <Button Content="Next"
-                    Command="{Binding NextCommand}"/>
-        </StackPanel>
+        <Border Background="#80000000"
+                CornerRadius="8"
+                Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Padding="8">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Command="{Binding PreviousCommand}"
+                        Content="Previous"/>
+                
+                <TextBlock Text="{Binding CurrentImageInfo}"
+                          Classes="info"/>
+                
+                <Button Command="{Binding NextCommand}"
+                        Content="Next"/>
+                
+                <Button Command="{Binding ResetTransformCommand}"
+                        Content="Reset"/>
+                
+                <Button Command="{Binding CloseCommand}"
+                        Content="Close"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window> 
