@@ -36,11 +36,11 @@ public partial class MainWindow : Window
             DataContext is MainWindowViewModel vm)
         {
             var index = vm.Images.IndexOf(imageFile);
-            var fullscreenWindow = new FullscreenWindow
+            var viewer = new ImageViewer
             {
-                DataContext = new FullscreenViewModel(vm.Images, index)
+                DataContext = new ImageViewerViewModel(vm.Images, index)
             };
-            await fullscreenWindow.ShowDialog(this);
+            await viewer.ShowDialog(this);
         }
     }
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ImageViewerApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef8f95e98138100e7e88dcb397ebb7ffddad4089")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6dbce432ea1ede7d194605322105bed0031b326f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ImageViewerApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ImageViewerApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -34,6 +34,7 @@ public class ImageLoaderService
                         Extension = Path.GetExtension(path).ToLower(),
                         Size = fileInfo.Length,
                         CreationTime = fileInfo.CreationTime,
+                        LastWriteTime = fileInfo.LastWriteTime,
                         Image = bitmap
                     });
                     Console.WriteLine($"Successfully loaded: {path}");

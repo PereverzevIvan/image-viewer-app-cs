@@ -29,3 +29,6 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/Views/FullscreenWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/Views/ImageViewer.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

@@ -1,0 +1,137 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ImageViewerApp.ViewModels"
+        xmlns:conv="using:ImageViewerApp.Converters"
+        x:Class="ImageViewerApp.Views.ImageViewer"
+        x:DataType="vm:ImageViewerViewModel"
+        Title="Image Viewer"
+        WindowState="FullScreen"
+        Background="Black"
+        Focusable="True">
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Escape" Command="{Binding CloseCommand}"/>
+        <KeyBinding Gesture="Left" Command="{Binding PreviousCommand}"/>
+        <KeyBinding Gesture="Right" Command="{Binding NextCommand}"/>
+        <KeyBinding Gesture="Space" Command="{Binding ResetTransformCommand}"/>
+    </Window.KeyBindings>
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#40FFFFFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="TextBlock.property-label">
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="Margin" Value="0,2,8,2"/>
+        </Style>
+        <Style Selector="TextBlock.property-value">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                     VerticalScrollBarVisibility="Disabled">
+            <Image Source="{Binding CurrentImage.Image}"
+                   RenderTransform="scale(1)"
+                   RenderTransformOrigin="0.5,0.5"
+                   PointerWheelChanged="OnImagePointerWheelChanged"
+                   PointerPressed="OnImagePointerPressed"
+                   PointerReleased="OnImagePointerReleased"
+                   PointerMoved="OnImagePointerMoved"
+                   DoubleTapped="OnImageDoubleTapped">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
+                        <TranslateTransform X="{Binding TranslateX}" Y="{Binding TranslateY}"/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+        </ScrollViewer>
+
+        <Border IsVisible="{Binding IsPropertiesVisible}"
+                Background="#80000000"
+                Width="300"
+                Padding="20"
+                Margin="20"
+                CornerRadius="8"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right">
+            <StackPanel>
+                <TextBlock Text="Свойства изображения"
+                          FontSize="18"
+                          Foreground="White"
+                          Margin="0,0,0,12"/>
+                
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Text="Имя:"
+                             Grid.Row="0" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.Name}"
+                             Grid.Row="0" Grid.Column="1"
+                             Classes="property-value"/>
+
+                    <TextBlock Text="Путь:"
+                             Grid.Row="1" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.Path}"
+                             Grid.Row="1" Grid.Column="1"
+                             TextWrapping="Wrap"
+                             Classes="property-value"/>
+
+                    <TextBlock Text="Размер:"
+                             Grid.Row="2" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.Size, 
+                                     Converter={x:Static conv:FileSizeConverter.Instance}}"
+                             Grid.Row="2" Grid.Column="1"
+                             Classes="property-value"/>
+
+                    <TextBlock Text="Создан:"
+                             Grid.Row="3" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.CreationTime, 
+                                     StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                             Grid.Row="3" Grid.Column="1"
+                             Classes="property-value"/>
+
+                    <TextBlock Text="Изменен:"
+                             Grid.Row="4" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.LastWriteTime, 
+                                     StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                             Grid.Row="4" Grid.Column="1"
+                             Classes="property-value"/>
+
+                    <TextBlock Text="Тип:"
+                             Grid.Row="5" Grid.Column="0"
+                             Classes="property-label"/>
+                    <TextBlock Text="{Binding CurrentImage.Extension}"
+                             Grid.Row="5" Grid.Column="1"
+                             Classes="property-value"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Height="60"
+                VerticalAlignment="Bottom"
+                Background="#40000000">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Spacing="10">
+                <Button Content="←"
+                        Command="{Binding PreviousCommand}"/>
+                <Button Content="✕"
+                        Command="{Binding CloseCommand}"/>
+                <Button Content="→"
+                        Command="{Binding NextCommand}"/>
+                <Button Content="ℹ"
+                        Command="{Binding TogglePropertiesCommand}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window> 
