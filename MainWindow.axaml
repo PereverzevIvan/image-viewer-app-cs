@@ -17,12 +17,34 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0056B3"/>
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#003D80"/>
         </Style>
         <Style Selector="ToggleButton">
             <Setter Property="Background" Value="#007AFF"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ToggleButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0056B3"/>
+        </Style>
+        <Style Selector="ToggleButton:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#003D80"/>
         </Style>
         <Style Selector="Border.image-container">
             <Setter Property="Transitions">
