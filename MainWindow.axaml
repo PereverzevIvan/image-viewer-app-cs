@@ -116,13 +116,24 @@
                             <Panel>
                                 <Image Source="{Binding Image}"
                                        Stretch="UniformToFill"/>
-                                <Border Height="40"
+                                <Border Height="80"
                                         VerticalAlignment="Bottom"
                                         Background="#80000000">
-                                    <TextBlock Text="{Binding Name}"
-                                               Margin="10,0"
-                                               VerticalAlignment="Center"
-                                               Foreground="White"/>
+                                    <StackPanel Margin="10,5">
+                                        <TextBlock Text="{Binding Name}"
+                                                  TextWrapping="NoWrap"
+                                                  TextTrimming="CharacterEllipsis"
+                                                  VerticalAlignment="Center"
+                                                  Foreground="White"/>
+                                        <TextBlock Text="{Binding CreationTime, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                                                  FontSize="12"
+                                                  Foreground="#CCCCCC"
+                                                  Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Size, 
+                                                         Converter={x:Static conv:FileSizeConverter.Instance}}"
+                                                  FontSize="12"
+                                                  Foreground="#CCCCCC"/>
+                                    </StackPanel>
                                 </Border>
                             </Panel>
                         </Border>
