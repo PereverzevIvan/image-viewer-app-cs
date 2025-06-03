@@ -64,3 +64,4 @@
 /home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/obj/Debug/net9.0/ImageVie.70B6A43C.Up2Date
 /home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/obj/Debug/net9.0/ImageViewerApp.genruntimeconfig.cache
 /home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/obj/Debug/net9.0/ref/ImageViewerApp.dll
+/home/ivan/Work/Политех/6_sem/mobile/ImageViewerApp/obj/Debug/net9.0/ImageViewerApp.sourcelink.json

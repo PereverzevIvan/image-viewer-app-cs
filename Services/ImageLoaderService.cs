@@ -10,45 +10,58 @@ namespace ImageViewerApp.Services;
 
 public class ImageLoaderService
 {
+    private static readonly string[] SupportedExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+
     public async Task<ObservableCollection<ImageFile>> LoadImagesAsync(string[] paths)
     {
         var images = new ObservableCollection<ImageFile>();
-        
-        foreach (var path in paths)
+        var filteredPaths = paths.Where(p => SupportedExtensions.Contains(Path.GetExtension(p).ToLower())).ToList();
+        Console.WriteLine($"Found {filteredPaths.Count} supported image files");
+
+        foreach (var path in filteredPaths)
         {
-            if (!File.Exists(path)) continue;
-            
-            try
+            var fileInfo = new FileInfo(path);
+            if (fileInfo.Exists)
             {
-                await Task.Run(() =>
+                try
                 {
-                    var bitmap = new Bitmap(path);
+                    Console.WriteLine($"Loading image: {path}");
+                    var bitmap = await Task.Run(() => new Bitmap(path));
                     images.Add(new ImageFile
                     {
                         Path = path,
                         Name = Path.GetFileName(path),
-                        Image = bitmap,
-                        GroupId = 0
+                        Extension = Path.GetExtension(path).ToLower(),
+                        Size = fileInfo.Length,
+                        CreationTime = fileInfo.CreationTime,
+                        Image = bitmap
                     });
-                });
+                    Console.WriteLine($"Successfully loaded: {path}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка загрузки изображения {path}: {ex.Message}");
+                }
             }
-            catch (Exception)
+            else
             {
-                // Skip invalid images
+                Console.WriteLine($"File not found: {path}");
             }
         }
-
         return images;
     }
 
     public async Task<ObservableCollection<ImageFile>> LoadImagesFromDirectoryAsync(string directory)
     {
-        var files = Directory.GetFiles(directory, "*.*")
-            .Where(file => file.ToLower().EndsWith("jpg") || 
-                          file.ToLower().EndsWith("jpeg") || 
-                          file.ToLower().EndsWith("png") || 
-                          file.ToLower().EndsWith("gif"));
-        
-        return await LoadImagesAsync(files.ToArray());
+        Console.WriteLine($"Scanning directory: {directory}");
+        var paths = await Task.Run(() => 
+        {
+            var files = Directory.GetFiles(directory)
+                .Where(file => SupportedExtensions.Contains(Path.GetExtension(file).ToLower()))
+                .ToArray();
+            Console.WriteLine($"Found {files.Length} files in directory");
+            return files;
+        });
+        return await LoadImagesAsync(paths);
     }
 } 

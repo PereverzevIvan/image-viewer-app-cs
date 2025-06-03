@@ -48,16 +48,30 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainWindowViewModel vm)
         {
-            var options = new FolderPickerOpenOptions
+            try
             {
-                Title = "Select folder with images",
-                AllowMultiple = false
-            };
+                var options = new FolderPickerOpenOptions
+                {
+                    Title = "Select folder with images",
+                    AllowMultiple = false
+                };
 
-            var result = await StorageProvider.OpenFolderPickerAsync(options);
-            if (result.Count > 0)
+                Console.WriteLine("Opening folder picker...");
+                var result = await StorageProvider.OpenFolderPickerAsync(options);
+                
+                if (result.Count > 0)
+                {
+                    Console.WriteLine($"Selected folder: {result[0].Path.LocalPath}");
+                    await vm.LoadImagesFromDirectoryAsync(result[0].Path.LocalPath);
+                }
+                else
+                {
+                    Console.WriteLine("No folder selected");
+                }
+            }
+            catch (Exception ex)
             {
-                await vm.LoadImagesFromDirectoryAsync(result[0].Path.LocalPath);
+                Console.WriteLine($"Error in OnOpenFolderClick: {ex}");
             }
         }
     }

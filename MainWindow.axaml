@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:ImageViewerApp.ViewModels"
         xmlns:conv="using:ImageViewerApp.Converters"
+        xmlns:models="using:ImageViewerApp.Models"
         x:Class="ImageViewerApp.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Image Viewer"
@@ -49,6 +50,38 @@
                 <ToggleButton Content="{Binding IsHorizontalOrientation, 
                               Converter={x:Static conv:OrientationTextConverter.Instance}}"
                              IsChecked="{Binding IsHorizontalOrientation}"/>
+                
+                <TextBox Text="{Binding SearchQuery}"
+                         Width="200"
+                         Watermark="Search by name..."
+                         Margin="10,0"/>
+                
+                <ComboBox SelectedItem="{Binding SelectedFileType}"
+                         Width="100"
+                         Margin="0,0,10,0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <x:String>All</x:String>
+                    <x:String>.jpg</x:String>
+                    <x:String>.jpeg</x:String>
+                    <x:String>.png</x:String>
+                    <x:String>.gif</x:String>
+                    <x:String>.bmp</x:String>
+                </ComboBox>
+                
+                <ComboBox SelectedItem="{Binding SortType}"
+                         Width="120">
+                    <models:SortType>Name</models:SortType>
+                    <models:SortType>DateCreated</models:SortType>
+                    <models:SortType>Size</models:SortType>
+                </ComboBox>
+                
+                <Button Command="{Binding ToggleSortDirectionCommand}"
+                        Content="{Binding SortDescending, 
+                                 Converter={x:Static conv:SortDirectionConverter.Instance}}"/>
             </StackPanel>
         </Border>
 
@@ -72,7 +105,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type models:ImageFile}">
                         <Border Margin="10"
                                 Classes="image-container"
                                 Background="#20000000"
